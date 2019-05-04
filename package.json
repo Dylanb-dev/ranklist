@@ -1,0 +1,54 @@
+{
+  "name": "ranklist",
+  "description": "Host Next.js SSR app on Firebase Cloud Functions with Firebase Hosting redirects. Built with typescript.",
+  "engines": {
+    "node": "8"
+  },
+  "scripts": {
+    "dev": "next app",
+    "build": "next build",
+    "start": "next start",
+    "postinstall": "node postinstall.js",
+    "preserve": "npm run build-public && npm run build-functions && npm run build-app && npm run copy-deps && npm run install-deps",
+    "serve": "cd \"dist/functions\" && cross-env NODE_ENV=production firebase serve",
+    "deploy": "firebase deploy",
+    "clean": "rimraf \"dist/functions\" && rimraf \"dist/public\"",
+    "build-app": "next build \"app\"",
+    "build-public": "cpx \"public/**/*.*\" \"dist/public\" -C",
+    "build-functions": "tsc --project functions",
+    "lint-app": "eslint app",
+    "typecheck-app": "tsc --project app",
+    "lint-functions": "eslint \"functions/**/*.ts\"",
+    "copy-deps": "cpx \"*{package.json,package-lock.json,yarn.lock}\" \"dist/functions\" -C",
+    "install-deps": "cd \"dist/functions\" && npm i --ignore-scripts",
+    "firebase": "firebase"
+  },
+  "dependencies": {
+    "@types/react-native": "^0.57.45",
+    "@zeit/next-typescript": "^1.1.1",
+    "babel-plugin-module-resolver": "^3.1.2",
+    "firebase-admin": "^6.3.0",
+    "firebase-functions": "^2.1.0",
+    "next": "8.1.0",
+    "react": "16.8.6",
+    "react-art": "^16.5.2",
+    "react-dom": "16.8.6",
+    "react-native-web": "^0.9.3"
+  },
+  "devDependencies": {
+    "@types/next": "^8.0.3",
+    "@types/react": "^16.8.13",
+    "@typescript-eslint/eslint-plugin": "^1.7.0",
+    "@typescript-eslint/parser": "^1.7.0",
+    "cpx": "1.5.0",
+    "cross-env": "5.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.12.4",
+    "firebase-tools": "^6.1.0",
+    "prettier": "^1.17.0",
+    "rimraf": "2.6.2",
+    "typescript": "^3.2.0"
+  }
+}
