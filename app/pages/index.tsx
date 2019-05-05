@@ -27,11 +27,17 @@ const styles = StyleSheet.create({
     padding: 16,
     width: '100vw',
     height: '100vh',
-    zIndex: 2,
-    alignItems: 'stretch',
-    flexGrow: 1,
+    backgroundColor: 'rgba(52, 52, 52, 0.1)',
+    alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(52, 52, 52, 0.1)'
+    zIndex: 2
+  },
+  contentContainer: {
+    alignItems: 'stretch',
+    maxWidth: 480,
+    width: '100%',
+    flexGrow: 1,
+    justifyContent: 'center'
   },
   background: {
     flexDirection: 'row',
@@ -133,14 +139,16 @@ const StartPage = ({
     <>
       <View style={styles.background} />
       <View style={styles.container}>
-        <FadeIn>
-          <Text style={styles.text}>Welcome to Ranklist!</Text>
-          <Button
-            color={colors.primary}
-            title={'start'}
-            onPress={(): void => setPage('makelist')}
-          />
-        </FadeIn>
+        <View style={styles.contentContainer}>
+          <FadeIn>
+            <Text style={styles.text}>Welcome to Ranklist!</Text>
+            <Button
+              color={colors.primary}
+              title={'start'}
+              onPress={(): void => setPage('makelist')}
+            />
+          </FadeIn>
+        </View>
       </View>
     </>
   )
@@ -212,61 +220,63 @@ class MakeListPage extends React.Component<
       <>
         <View style={styles.background} />
         <View style={styles.container}>
-          <FadeIn>
-            <Text style={styles.text2}>
-              Enter some things you want to rank!
-            </Text>
-            <AutoScrollView
-              style={{ height: 220, backgroundColor: 'white', padding: 8 }}
-            >
-              {this.props.things.length === 0 ? (
-                <Text style={{ color: colors.darkGray, padding: 2 }}>
-                  Things show up here...
-                </Text>
-              ) : (
-                this.props.things.map(
-                  ({ label }): JSX.Element => (
-                    <View key={label} style={{ flexDirection: 'row' }}>
-                      <Text style={styles.enteredThingText}>{label}</Text>
-                      <View style={{ width: 33, height: 33 }}>
-                        <Button
-                          color={colors.primary}
-                          title={' X '}
-                          onPress={(): void => handleRemoveThing(label)}
-                        />
+          <View style={styles.contentContainer}>
+            <FadeIn>
+              <Text style={styles.text2}>
+                Enter some things you want to rank!
+              </Text>
+              <AutoScrollView
+                style={{ height: 220, backgroundColor: 'white', padding: 8 }}
+              >
+                {this.props.things.length === 0 ? (
+                  <Text style={{ color: colors.darkGray, padding: 2 }}>
+                    Things show up here...
+                  </Text>
+                ) : (
+                  this.props.things.map(
+                    ({ label }): JSX.Element => (
+                      <View key={label} style={{ flexDirection: 'row' }}>
+                        <Text style={styles.enteredThingText}>{label}</Text>
+                        <View style={{ width: 33, height: 33 }}>
+                          <Button
+                            color={colors.primary}
+                            title={' X '}
+                            onPress={(): void => handleRemoveThing(label)}
+                          />
+                        </View>
                       </View>
-                    </View>
+                    )
                   )
-                )
-              )}
-            </AutoScrollView>
-            <TextInput
-              ref={(r): TextInput | null => (this._textInput = r)}
-              value={this.state.currentInput}
-              onChangeText={(e): void => this.setState({ currentInput: e })}
-              placeholder="Enter thing here..."
-              placeholderTextColor={colors.darkGray}
-              style={styles.textInput}
-              blurOnSubmit={false}
-              onSubmitEditing={handleAddThing}
-              maxLength={40}
-            />
-            <Button
-              color={colors.secondary}
-              title={'Add Thing'}
-              onPress={handleAddThing}
-            />
-            <View style={{ height: 14 }} />
-            <Button
-              color={colors.primary}
-              title={'go rank'}
-              onPress={(): void => {
-                if (this.props.things.length > 2) {
-                  this.props.setPage('rank')
-                }
-              }}
-            />
-          </FadeIn>
+                )}
+              </AutoScrollView>
+              <TextInput
+                ref={(r): TextInput | null => (this._textInput = r)}
+                value={this.state.currentInput}
+                onChangeText={(e): void => this.setState({ currentInput: e })}
+                placeholder="Enter thing here..."
+                placeholderTextColor={colors.darkGray}
+                style={styles.textInput}
+                blurOnSubmit={false}
+                onSubmitEditing={handleAddThing}
+                maxLength={40}
+              />
+              <Button
+                color={colors.secondary}
+                title={'Add Thing'}
+                onPress={handleAddThing}
+              />
+              <View style={{ height: 14 }} />
+              <Button
+                color={colors.primary}
+                title={'go rank'}
+                onPress={(): void => {
+                  if (this.props.things.length > 2) {
+                    this.props.setPage('rank')
+                  }
+                }}
+              />
+            </FadeIn>
+          </View>
         </View>
       </>
     )
@@ -312,39 +322,41 @@ const RankPage = ({
     <>
       <View style={styles.background} />
       <View style={styles.container}>
-        <FadeIn>
-          <Text style={styles.text}>Choose which one you prefer!</Text>
-          <View style={{ flexDirection: 'row' }}>
-            <ThingCard
-              thing={thingA}
-              style={{ marginRight: 4 }}
-              onPress={(): void =>
-                chooseThing({ thingWin: thingA, thingLose: thingB })
-              }
-            />
-            <ThingCard
-              thing={thingB}
-              style={{ marginLeft: 4 }}
-              onPress={(): void =>
-                chooseThing({ thingWin: thingB, thingLose: thingA })
-              }
-            />
-          </View>
-          {readyProgress === 100 ? (
-            <Button
-              color={colors.primary}
-              title={'View Results!'}
-              onPress={(): void => setPage('results')}
-            />
-          ) : (
-            <Button
-              color={colors.secondary}
-              title={'Skip'}
-              onPress={(): void => setPage('results')}
-            />
-          )}
-          <Text>{readyProgress}% No Ties and Ranked</Text>
-        </FadeIn>
+        <View style={styles.contentContainer}>
+          <FadeIn>
+            <Text style={styles.text}>Choose which one you prefer!</Text>
+            <View style={{ flexDirection: 'row' }}>
+              <ThingCard
+                thing={thingA}
+                style={{ marginRight: 4 }}
+                onPress={(): void =>
+                  chooseThing({ thingWin: thingA, thingLose: thingB })
+                }
+              />
+              <ThingCard
+                thing={thingB}
+                style={{ marginLeft: 4 }}
+                onPress={(): void =>
+                  chooseThing({ thingWin: thingB, thingLose: thingA })
+                }
+              />
+            </View>
+            {readyProgress === 100 ? (
+              <Button
+                color={colors.primary}
+                title={'View Results!'}
+                onPress={(): void => setPage('results')}
+              />
+            ) : (
+              <Button
+                color={colors.secondary}
+                title={'Skip'}
+                onPress={(): void => setPage('results')}
+              />
+            )}
+            <Text>{readyProgress}% No Ties and Ranked</Text>
+          </FadeIn>
+        </View>
       </View>
     </>
   )
@@ -362,66 +374,68 @@ const ResultsPage = ({
     <>
       <View style={styles.background} />
       <View style={styles.container}>
-        <FadeIn>
-          <Text style={styles.text}>Results!</Text>
-          <ScrollView
-            style={{
-              height: 220,
-              backgroundColor: 'white',
-              padding: 8,
-              marginBottom: 8
-            }}
-          >
-            {rankThings.map(
-              ({ label, rank }, index): JSX.Element => (
-                <View
-                  key={label}
-                  style={{
-                    marginVertical: 8,
-                    flexDirection: 'row',
-                    alignItems: 'flex-start'
-                  }}
-                >
-                  <Text
+        <View style={styles.contentContainer}>
+          <FadeIn>
+            <Text style={styles.text}>Results!</Text>
+            <ScrollView
+              style={{
+                height: 220,
+                backgroundColor: 'white',
+                padding: 8,
+                marginBottom: 8
+              }}
+            >
+              {rankThings.map(
+                ({ label, rank }, index): JSX.Element => (
+                  <View
+                    key={label}
                     style={{
-                      fontWeight: 'bold',
-                      width: 50,
-                      alignItems: 'center',
-                      fontSize: 16,
-                      marginVertical: 6
+                      marginVertical: 8,
+                      flexDirection: 'row',
+                      alignItems: 'flex-start'
                     }}
                   >
-                    {index + 1}.
-                  </Text>
-                  <Text
-                    style={{
-                      flex: 1,
-                      alignItems: 'center',
-                      fontSize: 16,
-                      marginVertical: 6
-                    }}
-                  >
-                    {label}
-                  </Text>
-                </View>
-              )
-            )}
-          </ScrollView>
-          <View style={{ marginVertical: 8 }}>
-            <Button
-              color={colors.secondary}
-              title={'Add More'}
-              onPress={(): void => setPage('makelist')}
-            />
-          </View>
-          <View style={{ marginVertical: 8 }}>
-            <Button
-              color={colors.primary}
-              title={'Rank More'}
-              onPress={(): void => setPage('rank')}
-            />
-          </View>
-        </FadeIn>
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        width: 50,
+                        alignItems: 'center',
+                        fontSize: 16,
+                        marginVertical: 6
+                      }}
+                    >
+                      {index + 1}.
+                    </Text>
+                    <Text
+                      style={{
+                        flex: 1,
+                        alignItems: 'center',
+                        fontSize: 16,
+                        marginVertical: 6
+                      }}
+                    >
+                      {label}
+                    </Text>
+                  </View>
+                )
+              )}
+            </ScrollView>
+            <View style={{ marginVertical: 8 }}>
+              <Button
+                color={colors.secondary}
+                title={'Add More'}
+                onPress={(): void => setPage('makelist')}
+              />
+            </View>
+            <View style={{ marginVertical: 8 }}>
+              <Button
+                color={colors.primary}
+                title={'Rank More'}
+                onPress={(): void => setPage('rank')}
+              />
+            </View>
+          </FadeIn>
+        </View>
       </View>
     </>
   )
