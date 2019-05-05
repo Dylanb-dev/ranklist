@@ -387,6 +387,11 @@ const RankPage = ({
   let thingA: Thing | null = null
   let thingB: Thing | null = null
 
+  const uniqueRanks = new Set(rankThings.map(({ rank }): number => rank))
+  const groupThings = Array.from(uniqueRanks).map(
+    (rank): Thing[] =>
+      rankThings.filter(({ rank: filterRank }): boolean => rank === filterRank)
+  )
   rankThings.map(
     (thing1): void[] =>
       rankThings.map(
@@ -443,7 +448,7 @@ const RankPage = ({
               onPress={(): void => setPage('results')}
             />
             <Text style={{ fontSize: 16, padding: 16 }}>
-              {readyProgress} Ties
+              {things.length - groupThings.length} Ties
             </Text>
           </FadeIn>
         </View>
