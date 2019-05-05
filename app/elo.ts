@@ -1,7 +1,9 @@
+type MyGameResult = 0 | 0.5 | 1
+
 function getRatingDelta(
   myRating: number,
   opponentRating: number,
-  myGameResult: 0 | 0.5 | 1
+  myGameResult: MyGameResult
 ): number {
   var myChanceToWin = 1 / (1 + Math.pow(10, (opponentRating - myRating) / 400))
 
@@ -11,7 +13,7 @@ function getRatingDelta(
 function getNewRating(
   myRating: number,
   opponentRating: number,
-  myGameResult: number
+  myGameResult: MyGameResult
 ): number {
   return myRating + getRatingDelta(myRating, opponentRating, myGameResult)
 }

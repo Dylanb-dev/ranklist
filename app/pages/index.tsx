@@ -10,6 +10,8 @@ import {
   TouchableOpacity
 } from 'react-native'
 
+import { getNewRating } from '../elo'
+
 const colors = {
   white: '#f8f9fa',
   black: '#374046',
@@ -22,11 +24,11 @@ const colors = {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    width: '100vw',
     padding: 16,
+    width: '100vw',
     height: '100vh',
     zIndex: 2,
-    alignItems: 'center',
+    alignItems: 'stretch',
     flexGrow: 1,
     justifyContent: 'center',
     backgroundColor: 'rgba(52, 52, 52, 0.1)'
@@ -111,8 +113,8 @@ class AutoScrollView extends React.Component<AutoScrollViewProps> {
     return (
       <ScrollView
         style={style}
-        ref={ref => (this.scrollView = ref)}
-        onContentSizeChange={() => {
+        ref={(ref): ScrollView | null => (this.scrollView = ref)}
+        onContentSizeChange={(): void => {
           this.scrollView.scrollToEnd({ animated: true })
         }}
       >
@@ -178,7 +180,6 @@ class MakeListPage extends React.Component<
 
   componentDidUpdate(): void {
     if (this.state.setFocus) {
-      console.log('TEST')
       this.setState(
         { setFocus: false },
         (): void => {
@@ -292,7 +293,8 @@ const RankPage = ({
   setPage,
   chooseThing,
   readyProgress,
-  things
+  thingA,
+  thingB
 }: {
   setPage: React.Dispatch<React.SetStateAction<string>>
   chooseThing: ({
@@ -303,11 +305,9 @@ const RankPage = ({
     thingLose: Thing
   }) => void
   readyProgress: ReadyProgress
-  things: Thing[]
+  thingA: Thing
+  thingB: Thing
 }): JSX.Element => {
-  const thingA = things[0]
-  const thingB = things[1]
-
   return (
     <>
       <View style={styles.background} />
@@ -318,30 +318,109 @@ const RankPage = ({
             <ThingCard
               thing={thingA}
               style={{ marginRight: 4 }}
-              onPress={() => console.log(`clicked ${thingA.label}`)}
+              onPress={(): void =>
+                chooseThing({ thingWin: thingA, thingLose: thingB })
+              }
             />
             <ThingCard
               thing={thingB}
               style={{ marginLeft: 4 }}
-              onPress={() => console.log(`clicked ${thingB.label}`)}
+              onPress={(): void =>
+                chooseThing({ thingWin: thingB, thingLose: thingA })
+              }
             />
           </View>
-          <Button
-            color={colors.secondary}
-            title={'Skip'}
-            onPress={(): void => setPage('results')}
-          />
           {readyProgress === 100 ? (
-            <View style={{ marginVertical: 8 }}>
-              <Button
-                color={colors.primary}
-                title={'View Results!'}
-                onPress={(): void => setPage('results')}
-              />
-            </View>
+            <Button
+              color={colors.primary}
+              title={'View Results!'}
+              onPress={(): void => setPage('results')}
+            />
           ) : (
-            <Text>{readyProgress}% Complete</Text>
+            <Button
+              color={colors.secondary}
+              title={'Skip'}
+              onPress={(): void => setPage('results')}
+            />
           )}
+          <Text>{readyProgress}% No Ties and Ranked</Text>
+        </FadeIn>
+      </View>
+    </>
+  )
+}
+
+const ResultsPage = ({
+  setPage,
+  things
+}: {
+  setPage: React.Dispatch<React.SetStateAction<string>>
+  things: Thing[]
+}): JSX.Element => {
+  const rankThings: Thing[] = things.sort((a, b): number => b.rank - a.rank)
+  return (
+    <>
+      <View style={styles.background} />
+      <View style={styles.container}>
+        <FadeIn>
+          <Text style={styles.text}>Results!</Text>
+          <ScrollView
+            style={{
+              height: 220,
+              backgroundColor: 'white',
+              padding: 8,
+              marginBottom: 8
+            }}
+          >
+            {rankThings.map(
+              ({ label, rank }, index): JSX.Element => (
+                <View
+                  key={label}
+                  style={{
+                    marginVertical: 8,
+                    flexDirection: 'row',
+                    alignItems: 'flex-start'
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      width: 50,
+                      alignItems: 'center',
+                      fontSize: 16,
+                      marginVertical: 6
+                    }}
+                  >
+                    {index + 1}.
+                  </Text>
+                  <Text
+                    style={{
+                      flex: 1,
+                      alignItems: 'center',
+                      fontSize: 16,
+                      marginVertical: 6
+                    }}
+                  >
+                    {label}
+                  </Text>
+                </View>
+              )
+            )}
+          </ScrollView>
+          <View style={{ marginVertical: 8 }}>
+            <Button
+              color={colors.secondary}
+              title={'Add More'}
+              onPress={(): void => setPage('makelist')}
+            />
+          </View>
+          <View style={{ marginVertical: 8 }}>
+            <Button
+              color={colors.primary}
+              title={'Rank More'}
+              onPress={(): void => setPage('rank')}
+            />
+          </View>
         </FadeIn>
       </View>
     </>
@@ -351,21 +430,65 @@ const RankPage = ({
 const Index = (): JSX.Element => {
   const [page, setPage] = useState('start')
   const [things, setThings] = useState<Thing[]>([])
-  const [readyProgress, setReadyProgress] = useState<ReadyProgress>(100)
+  const [readyProgress, setReadyProgress] = useState<ReadyProgress>(0)
+  console.log(things)
+
+  const filterThingsByLabel = (things: Thing[], thingLabel: string): Thing[] =>
+    things.filter(({ label }): boolean => label !== thingLabel)
 
   const removeThing = (thingLabel: string): void => {
-    setThings(things.filter(({ label }): boolean => label !== thingLabel))
+    setThings(filterThingsByLabel(things, thingLabel))
   }
   const addThing = (thingLabel: string): void => {
     setThings([...things, { label: thingLabel, rank: 0 }])
   }
+
+  const checkReadyProgress = (things: Thing[]): ReadyProgress =>
+    //@ts-ignore
+    (
+      things.filter(
+        ({ rank, label }): boolean =>
+          rank !== 0 &&
+          things.filter(
+            ({ rank: otherRank, label: otherLabel }): boolean =>
+              rank === otherRank && label !== otherLabel
+          ).length === 0
+      ).length / things.length
+    ).toFixed(1) * 100
+
   const chooseThing = ({
     thingWin,
     thingLose
   }: {
     thingWin: Thing
     thingLose: Thing
-  }): void => {}
+  }): void => {
+    const newThingA = {
+      label: thingWin.label,
+      rank: getNewRating(thingWin.rank, thingLose.rank, 1)
+    }
+
+    const newThingB = {
+      label: thingLose.label,
+      rank: getNewRating(thingLose.rank, thingWin.rank, 0)
+    }
+    const newThings = things
+      .filter(({ label }): boolean => label !== newThingA.label)
+      .filter(({ label }): boolean => label !== newThingB.label)
+      .concat(newThingA)
+      .concat(newThingB)
+    setReadyProgress(checkReadyProgress(newThings))
+    setThings(newThings)
+  }
+
+  const thingA = things[Math.floor(Math.random() * things.length)]
+
+  const thingsWithOutA = things.filter(
+    ({ label }): boolean => label !== thingA.label
+  )
+
+  const thingB =
+    thingsWithOutA[Math.floor(Math.random() * thingsWithOutA.length)]
 
   switch (page) {
     case 'start':
@@ -383,11 +506,14 @@ const Index = (): JSX.Element => {
       return (
         <RankPage
           setPage={setPage}
-          things={things}
+          thingA={thingA}
+          thingB={thingB}
           readyProgress={readyProgress}
           chooseThing={chooseThing}
         />
       )
+    case 'results':
+      return <ResultsPage setPage={setPage} things={things} />
     default:
       return <StartPage setPage={setPage} />
   }
