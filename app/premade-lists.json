@@ -1,0 +1,39 @@
+{
+  "arnotts": [
+    "Tim Tam Bites",
+    "Bites Caramel Crown",
+    "Bites Mint Slice",
+    "Chocolate Butternut Snap",
+    "Caramel Crown",
+    "Chocolate Monte",
+    "Chocolate Scotch Finger",
+    "Scotch Finge",
+    "Mint Slice",
+    "Royals Dark",
+    "Milk Coffee"
+  ],
+  "programming": [
+    "JavaScript",
+    "Python",
+    "Swift",
+    "TypeScript",
+    "Go Programming Language",
+    "Ruby",
+    "Kotlin",
+    "C#",
+    "Rust",
+    "Elixir",
+    "Haskell"
+  ],
+  "fastfood": [
+    "McDonalds",
+    "Burger King",
+    "KFC",
+    "Wendy's",
+    "Taco Bell",
+    "Dominos",
+    "Papa Johns",
+    "Subway",
+    "Pizza Hut"
+  ]
+}

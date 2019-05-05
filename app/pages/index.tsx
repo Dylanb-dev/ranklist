@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 
 import { getNewRating } from '../elo'
+const premadeLists = require('../premade-lists.json')
 
 const colors = {
   white: '#f8f9fa',
@@ -131,9 +132,11 @@ class AutoScrollView extends React.Component<AutoScrollViewProps> {
 }
 
 const StartPage = ({
-  setPage
+  setPage,
+  setThings
 }: {
   setPage: React.Dispatch<React.SetStateAction<string>>
+  setThings: React.Dispatch<React.SetStateAction<Thing[]>>
 }): JSX.Element => {
   return (
     <>
@@ -142,11 +145,74 @@ const StartPage = ({
         <View style={styles.contentContainer}>
           <FadeIn>
             <Text style={styles.text}>Welcome to Ranklist!</Text>
-            <Button
-              color={colors.primary}
-              title={'start'}
-              onPress={(): void => setPage('makelist')}
-            />
+            <View style={{ marginVertical: 8 }}>
+              <Text style={{ fontSize: 16 }}>
+                Create a list and rank them using A/B selection
+              </Text>
+            </View>
+
+            <View style={{ marginVertical: 8 }}>
+              <Button
+                color={colors.primary}
+                title={'start a new list'}
+                onPress={(): void => setPage('makelist')}
+              />
+            </View>
+            <View style={{ marginVertical: 8 }}>
+              <Text style={{ fontSize: 16 }}>Or rank a premade list!</Text>
+            </View>
+
+            <View style={{ marginVertical: 8 }}>
+              <Button
+                color={colors.secondary}
+                title={'arnotts biscuits'}
+                onPress={(): void => {
+                  setThings(
+                    premadeLists.arnotts.map(
+                      (lang: string): Thing => ({
+                        label: lang,
+                        rank: 0
+                      })
+                    )
+                  )
+                  setPage('makelist')
+                }}
+              />
+            </View>
+            <View style={{ marginVertical: 8 }}>
+              <Button
+                color={colors.secondary}
+                title={'fast food chains'}
+                onPress={(): void => {
+                  setThings(
+                    premadeLists.fastfood.map(
+                      (lang: string): Thing => ({
+                        label: lang,
+                        rank: 0
+                      })
+                    )
+                  )
+                  setPage('makelist')
+                }}
+              />
+            </View>
+            <View style={{ marginVertical: 8 }}>
+              <Button
+                color={colors.secondary}
+                title={'programming languages'}
+                onPress={(): void => {
+                  setThings(
+                    premadeLists.programming.map(
+                      (lang: string): Thing => ({
+                        label: lang,
+                        rank: 0
+                      })
+                    )
+                  )
+                  setPage('makelist')
+                }}
+              />
+            </View>
           </FadeIn>
         </View>
       </View>
@@ -293,18 +359,17 @@ const ThingCard = ({
   style?: any
 }): JSX.Element => (
   <TouchableOpacity onPress={onPress} style={[styles.thingContainer, style]}>
-    <Text>{thing.label}</Text>
+    <Text style={{ fontSize: 16 }}>{thing.label}</Text>
   </TouchableOpacity>
 )
 
-type ReadyProgress = 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
+type ReadyProgress = number
 
 const RankPage = ({
   setPage,
   chooseThing,
   readyProgress,
-  thingA,
-  thingB
+  things
 }: {
   setPage: React.Dispatch<React.SetStateAction<string>>
   chooseThing: ({
@@ -315,9 +380,38 @@ const RankPage = ({
     thingLose: Thing
   }) => void
   readyProgress: ReadyProgress
-  thingA: Thing
-  thingB: Thing
+  things: Thing[]
 }): JSX.Element => {
+  const rankThings: Thing[] = things.sort((a, b): number => b.rank - a.rank)
+
+  let thingA: Thing | null = null
+  let thingB: Thing | null = null
+
+  rankThings.map(
+    (thing1): void[] =>
+      rankThings.map(
+        (thing2): void => {
+          if (
+            thing1.rank === thing2.rank &&
+            thing1.label !== thing2.label &&
+            thingA === null &&
+            thingB === null
+          ) {
+            thingA = thing1
+            thingB = thing2
+          }
+        }
+      )
+  )
+  if (thingA === null || thingB === null) {
+    thingA = things[Math.floor(Math.random() * things.length)]
+    const thingsWithOutA = things.filter(
+      //@ts-ignore
+      ({ label }): boolean => label !== thingA.label
+    )
+    thingB = thingsWithOutA[Math.floor(Math.random() * thingsWithOutA.length)]
+  }
+
   return (
     <>
       <View style={styles.background} />
@@ -330,6 +424,7 @@ const RankPage = ({
                 thing={thingA}
                 style={{ marginRight: 4 }}
                 onPress={(): void =>
+                  //@ts-ignore
                   chooseThing({ thingWin: thingA, thingLose: thingB })
                 }
               />
@@ -337,24 +432,19 @@ const RankPage = ({
                 thing={thingB}
                 style={{ marginLeft: 4 }}
                 onPress={(): void =>
+                  //@ts-ignore
                   chooseThing({ thingWin: thingB, thingLose: thingA })
                 }
               />
             </View>
-            {readyProgress === 100 ? (
-              <Button
-                color={colors.primary}
-                title={'View Results!'}
-                onPress={(): void => setPage('results')}
-              />
-            ) : (
-              <Button
-                color={colors.secondary}
-                title={'Skip'}
-                onPress={(): void => setPage('results')}
-              />
-            )}
-            <Text>{readyProgress}% No Ties and Ranked</Text>
+            <Button
+              color={colors.primary}
+              title={'View Results!'}
+              onPress={(): void => setPage('results')}
+            />
+            <Text style={{ fontSize: 16, padding: 16 }}>
+              {readyProgress} Ties
+            </Text>
           </FadeIn>
         </View>
       </View>
@@ -370,6 +460,12 @@ const ResultsPage = ({
   things: Thing[]
 }): JSX.Element => {
   const rankThings: Thing[] = things.sort((a, b): number => b.rank - a.rank)
+  const uniqueRanks = new Set(rankThings.map(({ rank }): number => rank))
+  const groupThings = Array.from(uniqueRanks).map(
+    (rank): Thing[] =>
+      rankThings.filter(({ rank: filterRank }): boolean => rank === filterRank)
+  )
+
   return (
     <>
       <View style={styles.background} />
@@ -385,39 +481,42 @@ const ResultsPage = ({
                 marginBottom: 8
               }}
             >
-              {rankThings.map(
-                ({ label, rank }, index): JSX.Element => (
-                  <View
-                    key={label}
-                    style={{
-                      marginVertical: 8,
-                      flexDirection: 'row',
-                      alignItems: 'flex-start'
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontWeight: 'bold',
-                        width: 50,
-                        alignItems: 'center',
-                        fontSize: 16,
-                        marginVertical: 6
-                      }}
-                    >
-                      {index + 1}.
-                    </Text>
-                    <Text
-                      style={{
-                        flex: 1,
-                        alignItems: 'center',
-                        fontSize: 16,
-                        marginVertical: 6
-                      }}
-                    >
-                      {label}
-                    </Text>
-                  </View>
-                )
+              {groupThings.map(
+                (group, index): JSX.Element[] =>
+                  group.map(
+                    ({ label }): JSX.Element => (
+                      <View
+                        key={label}
+                        style={{
+                          marginVertical: 8,
+                          flexDirection: 'row',
+                          alignItems: 'flex-start'
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontWeight: 'bold',
+                            width: 50,
+                            alignItems: 'center',
+                            fontSize: 16,
+                            marginVertical: 6
+                          }}
+                        >
+                          {index + 1}.
+                        </Text>
+                        <Text
+                          style={{
+                            flex: 1,
+                            alignItems: 'center',
+                            fontSize: 16,
+                            marginVertical: 6
+                          }}
+                        >
+                          {label}
+                        </Text>
+                      </View>
+                    )
+                  )
               )}
             </ScrollView>
             <View style={{ marginVertical: 8 }}>
@@ -445,7 +544,6 @@ const Index = (): JSX.Element => {
   const [page, setPage] = useState('start')
   const [things, setThings] = useState<Thing[]>([])
   const [readyProgress, setReadyProgress] = useState<ReadyProgress>(0)
-  console.log(things)
 
   const filterThingsByLabel = (things: Thing[], thingLabel: string): Thing[] =>
     things.filter(({ label }): boolean => label !== thingLabel)
@@ -457,18 +555,16 @@ const Index = (): JSX.Element => {
     setThings([...things, { label: thingLabel, rank: 0 }])
   }
 
-  const checkReadyProgress = (things: Thing[]): ReadyProgress =>
+  const checkReadyProgress = (things: Thing[]): ReadyProgress => {
     //@ts-ignore
-    (
-      things.filter(
-        ({ rank, label }): boolean =>
-          rank !== 0 &&
-          things.filter(
-            ({ rank: otherRank, label: otherLabel }): boolean =>
-              rank === otherRank && label !== otherLabel
-          ).length === 0
-      ).length / things.length
-    ).toFixed(1) * 100
+    return things.filter(
+      ({ rank: otherRank, label: otherLabel }): boolean =>
+        things.filter(
+          ({ rank, label }): boolean =>
+            rank === otherRank && label !== otherLabel
+        ).length > 0
+    ).length
+  }
 
   const chooseThing = ({
     thingWin,
@@ -495,18 +591,9 @@ const Index = (): JSX.Element => {
     setThings(newThings)
   }
 
-  const thingA = things[Math.floor(Math.random() * things.length)]
-
-  const thingsWithOutA = things.filter(
-    ({ label }): boolean => label !== thingA.label
-  )
-
-  const thingB =
-    thingsWithOutA[Math.floor(Math.random() * thingsWithOutA.length)]
-
   switch (page) {
     case 'start':
-      return <StartPage setPage={setPage} />
+      return <StartPage setPage={setPage} setThings={setThings} />
     case 'makelist':
       return (
         <MakeListPage
@@ -520,8 +607,7 @@ const Index = (): JSX.Element => {
       return (
         <RankPage
           setPage={setPage}
-          thingA={thingA}
-          thingB={thingB}
+          things={things}
           readyProgress={readyProgress}
           chooseThing={chooseThing}
         />
@@ -529,7 +615,7 @@ const Index = (): JSX.Element => {
     case 'results':
       return <ResultsPage setPage={setPage} things={things} />
     default:
-      return <StartPage setPage={setPage} />
+      return <StartPage setPage={setPage} setThings={setThings} />
   }
 }
 
