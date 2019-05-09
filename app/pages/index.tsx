@@ -11,6 +11,9 @@ import {
 } from 'react-native'
 
 import { getNewRating } from '../elo'
+import { Thing } from '../interfaces'
+import { db } from '../firebase'
+import { useCollection } from '../useCollection'
 const premadeLists = require('../premade-lists.json')
 
 const colors = {
@@ -36,9 +39,9 @@ const styles = StyleSheet.create({
   contentContainer: {
     alignItems: 'stretch',
     maxWidth: 480,
+    marginTop: 96,
     width: '100%',
-    flexGrow: 1,
-    justifyContent: 'center'
+    flexGrow: 1
   },
   background: {
     flexDirection: 'row',
@@ -56,16 +59,21 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     alignItems: 'center',
-    fontSize: 24,
-    marginVertical: 32
+    fontSize: 24
   },
   text2: {
     flex: 1,
     width: '100%',
     alignItems: 'center',
     fontSize: 24,
-    marginBottom: 16,
-    marginTop: 100
+    marginBottom: 16
+  },
+  text3: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+    fontSize: 32,
+    marginBottom: 24
   },
   enteredThingText: {
     flex: 1,
@@ -132,11 +140,9 @@ class AutoScrollView extends React.Component<AutoScrollViewProps> {
 }
 
 const StartPage = ({
-  setPage,
-  setThings
+  setPage
 }: {
   setPage: React.Dispatch<React.SetStateAction<string>>
-  setThings: React.Dispatch<React.SetStateAction<Thing[]>>
 }): JSX.Element => {
   return (
     <>
@@ -145,6 +151,7 @@ const StartPage = ({
         <View style={styles.contentContainer}>
           <FadeIn>
             <Text style={styles.text}>Welcome to Ranklist!</Text>
+            <Text style={styles.text3}>List it. Share it. Rank it</Text>
             <View style={{ marginVertical: 8 }}>
               <Text style={{ fontSize: 16 }}>
                 Create a list and rank them using A/B selection
@@ -167,15 +174,7 @@ const StartPage = ({
                 color={colors.secondary}
                 title={'arnotts biscuits'}
                 onPress={(): void => {
-                  setThings(
-                    premadeLists.arnotts.map(
-                      (lang: string): Thing => ({
-                        label: lang,
-                        rank: 0
-                      })
-                    )
-                  )
-                  setPage('makelist')
+                  setPage('makelist/')
                 }}
               />
             </View>
@@ -184,14 +183,6 @@ const StartPage = ({
                 color={colors.secondary}
                 title={'fast food chains'}
                 onPress={(): void => {
-                  setThings(
-                    premadeLists.fastfood.map(
-                      (lang: string): Thing => ({
-                        label: lang,
-                        rank: 0
-                      })
-                    )
-                  )
                   setPage('makelist')
                 }}
               />
@@ -201,15 +192,7 @@ const StartPage = ({
                 color={colors.secondary}
                 title={'programming languages'}
                 onPress={(): void => {
-                  setThings(
-                    premadeLists.programming.map(
-                      (lang: string): Thing => ({
-                        label: lang,
-                        rank: 0
-                      })
-                    )
-                  )
-                  setPage('makelist')
+                  setPage('makelist/l/lK0f3oHvWxopwn6vCO4U')
                 }}
               />
             </View>
@@ -224,11 +207,6 @@ interface MakeListPageProps {
   things: Thing[]
   addThing: (x: string) => void
   removeThing: (x: string) => void
-}
-
-interface Thing {
-  label: string
-  rank: number
 }
 interface MakeListPageState {
   currentInput: string
@@ -278,8 +256,8 @@ class MakeListPage extends React.Component<
       }
     }
 
-    const handleRemoveThing = (removeThingName: string): void => {
-      this.props.removeThing(removeThingName)
+    const handleRemoveThing = (removeThingId: string): void => {
+      this.props.removeThing(removeThingId)
     }
 
     return (
@@ -300,14 +278,14 @@ class MakeListPage extends React.Component<
                   </Text>
                 ) : (
                   this.props.things.map(
-                    ({ label }): JSX.Element => (
+                    ({ label, id }): JSX.Element => (
                       <View key={label} style={{ flexDirection: 'row' }}>
                         <Text style={styles.enteredThingText}>{label}</Text>
                         <View style={{ width: 33, height: 33 }}>
                           <Button
                             color={colors.primary}
                             title={' X '}
-                            onPress={(): void => handleRemoveThing(label)}
+                            onPress={(): void => handleRemoveThing(id)}
                           />
                         </View>
                       </View>
@@ -477,7 +455,7 @@ const ResultsPage = ({
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <FadeIn>
-            <Text style={styles.text}>Results!</Text>
+            <Text style={[styles.text, { marginVertical: 16 }]}>Results!</Text>
             <ScrollView
               style={{
                 height: 220,
@@ -489,7 +467,7 @@ const ResultsPage = ({
               {groupThings.map(
                 (group, index): JSX.Element[] =>
                   group.map(
-                    ({ label }): JSX.Element => (
+                    ({ label, rank }): JSX.Element => (
                       <View
                         key={label}
                         style={{
@@ -501,13 +479,21 @@ const ResultsPage = ({
                         <Text
                           style={{
                             fontWeight: 'bold',
-                            width: 50,
+                            width: 80,
                             alignItems: 'center',
                             fontSize: 16,
                             marginVertical: 6
                           }}
                         >
-                          {index + 1}.
+                          {index + 1}.{' '}
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontWeight: 'normal'
+                            }}
+                          >
+                            ({rank})
+                          </Text>
                         </Text>
                         <Text
                           style={{
@@ -547,17 +533,25 @@ const ResultsPage = ({
 
 const Index = (): JSX.Element => {
   const [page, setPage] = useState('start')
-  const [things, setThings] = useState<Thing[]>([])
   const [readyProgress, setReadyProgress] = useState<ReadyProgress>(0)
 
-  const filterThingsByLabel = (things: Thing[], thingLabel: string): Thing[] =>
-    things.filter(({ label }): boolean => label !== thingLabel)
+  const listId = 'lK0f3oHvWxopwn6vCO4U'
 
-  const removeThing = (thingLabel: string): void => {
-    setThings(filterThingsByLabel(things, thingLabel))
+  // @ts-ignore
+  const things: Thing[] = useCollection(`lists/${listId}/things`, 'createdAt')
+
+  const removeThing = (id: string): void => {
+    db.collection(`lists/${listId}/things`)
+      .doc(id)
+      .delete()
   }
-  const addThing = (thingLabel: string): void => {
-    setThings([...things, { label: thingLabel, rank: 0 }])
+  const addThing = (thingLabel: string, rank: number = 0): void => {
+    console.log(thingLabel)
+    db.collection(`lists/${listId}/things`).add({
+      label: thingLabel,
+      rank,
+      createdAt: new Date()
+    })
   }
 
   const checkReadyProgress = (things: Thing[]): ReadyProgress => {
@@ -578,27 +572,29 @@ const Index = (): JSX.Element => {
     thingWin: Thing
     thingLose: Thing
   }): void => {
-    const newThingA = {
-      label: thingWin.label,
-      rank: getNewRating(thingWin.rank, thingLose.rank, 1)
-    }
+    db.collection(`lists/${listId}/things`)
+      .doc(thingWin.id)
+      .set({
+        ...thingWin,
+        rank: getNewRating(thingWin.rank, thingLose.rank, 1)
+      })
+    db.collection(`lists/${listId}/things`)
+      .doc(thingLose.id)
+      .set({
+        ...thingLose,
+        rank: getNewRating(thingLose.rank, thingWin.rank, 0)
+      })
 
-    const newThingB = {
-      label: thingLose.label,
-      rank: getNewRating(thingLose.rank, thingWin.rank, 0)
-    }
-    const newThings = things
-      .filter(({ label }): boolean => label !== newThingA.label)
-      .filter(({ label }): boolean => label !== newThingB.label)
-      .concat(newThingA)
-      .concat(newThingB)
-    setReadyProgress(checkReadyProgress(newThings))
-    setThings(newThings)
+    setReadyProgress(checkReadyProgress(things))
+  }
+
+  if (listId === undefined) {
+    return <StartPage setPage={setPage} />
   }
 
   switch (page) {
     case 'start':
-      return <StartPage setPage={setPage} setThings={setThings} />
+      return <StartPage setPage={setPage} />
     case 'makelist':
       return (
         <MakeListPage
@@ -620,7 +616,7 @@ const Index = (): JSX.Element => {
     case 'results':
       return <ResultsPage setPage={setPage} things={things} />
     default:
-      return <StartPage setPage={setPage} setThings={setThings} />
+      return <StartPage setPage={setPage} />
   }
 }
 
