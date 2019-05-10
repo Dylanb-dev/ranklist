@@ -15,6 +15,8 @@ import { Thing } from '../interfaces'
 import { db } from '../firebase'
 import { useCollection } from '../useCollection'
 const premadeLists = require('../premade-lists.json')
+import Link from 'next/link'
+import Router from 'next/router'
 
 const colors = {
   white: '#f8f9fa',
@@ -139,11 +141,7 @@ class AutoScrollView extends React.Component<AutoScrollViewProps> {
   }
 }
 
-const StartPage = ({
-  setPage
-}: {
-  setPage: React.Dispatch<React.SetStateAction<string>>
-}): JSX.Element => {
+const StartPage = ({  }: {}): JSX.Element => {
   return (
     <>
       <View style={styles.background} />
@@ -151,7 +149,7 @@ const StartPage = ({
         <View style={styles.contentContainer}>
           <FadeIn>
             <Text style={styles.text}>Welcome to Ranklist!</Text>
-            <Text style={styles.text3}>List it. Share it. Rank it</Text>
+            <Text style={styles.text3}>Make it. Share it. Rank it</Text>
             <View style={{ marginVertical: 8 }}>
               <Text style={{ fontSize: 16 }}>
                 Create a list and rank them using A/B selection
@@ -174,7 +172,7 @@ const StartPage = ({
                 color={colors.secondary}
                 title={'arnotts biscuits'}
                 onPress={(): void => {
-                  setPage('makelist/')
+                  // setPage('makelist/')
                 }}
               />
             </View>
@@ -182,18 +180,19 @@ const StartPage = ({
               <Button
                 color={colors.secondary}
                 title={'fast food chains'}
-                onPress={(): void => {
-                  setPage('makelist')
-                }}
+                onPress={(): void => {}}
               />
             </View>
             <View style={{ marginVertical: 8 }}>
               <Button
                 color={colors.secondary}
                 title={'programming languages'}
-                onPress={(): void => {
-                  setPage('makelist/l/lK0f3oHvWxopwn6vCO4U')
-                }}
+                onPress={(): Promise<boolean> =>
+                  Router.push(
+                    '/makelist?slug=lK0f3oHvWxopwn6vCO4U',
+                    '/makelist/l/lK0f3oHvWxopwn6vCO4U'
+                  )
+                }
               />
             </View>
           </FadeIn>
@@ -589,12 +588,12 @@ const Index = (): JSX.Element => {
   }
 
   if (listId === undefined) {
-    return <StartPage setPage={setPage} />
+    return <StartPage />
   }
 
   switch (page) {
     case 'start':
-      return <StartPage setPage={setPage} />
+      return <StartPage />
     case 'makelist':
       return (
         <MakeListPage
@@ -616,8 +615,16 @@ const Index = (): JSX.Element => {
     case 'results':
       return <ResultsPage setPage={setPage} things={things} />
     default:
-      return <StartPage setPage={setPage} />
+      return <StartPage />
   }
+}
+
+Index.getInitialProps = async ({
+  query
+}: {
+  query: { slug: string }
+}): Promise<object> => {
+  return { query }
 }
 
 export default Index
