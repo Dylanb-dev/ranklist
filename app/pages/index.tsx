@@ -110,7 +110,8 @@ const StartPage = ({  }: {}): JSX.Element => {
   return (
     <>
       <Head>
-        <title>RankList</title>
+        <title>Ranklist - Rank everything!</title>
+        <link rel="icon" href="/static/images/icon.ico" />
       </Head>
       <View style={styles.background} />
       <View style={styles.container}>
