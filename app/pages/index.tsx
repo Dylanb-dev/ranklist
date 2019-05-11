@@ -149,19 +149,6 @@ const StartPage = ({  }: {}): JSX.Element => {
             <View style={{ marginVertical: 8 }}>
               <Text style={{ fontSize: 16 }}>Or rank a premade list!</Text>
             </View>
-
-            <View style={{ marginVertical: 8 }}>
-              <Button
-                color={colors.secondary}
-                title={'arnotts biscuits'}
-                onPress={(): Promise<boolean> =>
-                  Router.push(
-                    '/rank?slug=Q9d04QrgFm2dZx6Po2Kv',
-                    '/rank/l/Q9d04QrgFm2dZx6Po2Kv'
-                  )
-                }
-              />
-            </View>
             <View style={{ marginVertical: 8 }}>
               <Button
                 color={colors.secondary}
@@ -182,6 +169,18 @@ const StartPage = ({  }: {}): JSX.Element => {
                   Router.push(
                     '/rank?slug=b7XUHNdgQg6XeTp0IMSO',
                     '/rank/l/b7XUHNdgQg6XeTp0IMSO'
+                  )
+                }
+              />
+            </View>
+            <View style={{ marginVertical: 8 }}>
+              <Button
+                color={colors.secondary}
+                title={'arnotts biscuits'}
+                onPress={(): Promise<boolean> =>
+                  Router.push(
+                    '/rank?slug=Q9d04QrgFm2dZx6Po2Kv',
+                    '/rank/l/Q9d04QrgFm2dZx6Po2Kv'
                   )
                 }
               />
