@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native'
 import { FadeIn } from '../components/FadeIn'
 import { Share } from '../components/Share'
+import { AdSense } from '../components/AdSense'
 
 import { Thing } from '../interfaces'
 import { colors } from '../theme'
@@ -201,6 +202,7 @@ const RankPage = ({
             </Text>
             <Share listId={listId} />
           </FadeIn>
+          <AdSense />
         </View>
       </View>
     </>

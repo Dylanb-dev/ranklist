@@ -11,14 +11,7 @@ export class AdSense extends React.Component {
       document.body.insertBefore(elem, document.body.firstChild)
     }
     installGoogleAds()
-    var isAdsenseNotLoaded =
-      //@ts-ignore
-      !adsbygoogle || typeof adsbygoogle.loaded === 'undefined'
-
-    if (!isAdsenseNotLoaded) {
-      //@ts-ignore
-      ;(adsbygoogle = window.adsbygoogle || []).push({})
-    }
+    ;(window.adsbygoogle = window.adsbygoogle || []).push({})
   }
 
   render() {

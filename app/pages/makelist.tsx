@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button, TextInput } from 'react-native'
 import { AutoScrollView } from '../components/AutoScrollView'
 import { FadeIn } from '../components/FadeIn'
 import { Share } from '../components/Share'
+import { AdSense } from '../components/AdSense'
 
 import { Thing } from '../interfaces'
 import { colors } from '../theme'
@@ -209,6 +210,7 @@ class MakeListPage extends React.Component<
               />
               <Share listId={this.props.listId} />
             </FadeIn>
+            <AdSense />
           </View>
         </View>
       </>
