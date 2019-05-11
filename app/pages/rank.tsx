@@ -188,7 +188,7 @@ const RankPage = ({
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <FadeIn>
-            <Text style={styles.text}>Choose which one you prefer!</Text>
+            <Text style={styles.text}>Choose which {name} you prefer!</Text>
             <View style={{ flexDirection: 'row' }}>
               <ThingCard
                 thing={thingA}

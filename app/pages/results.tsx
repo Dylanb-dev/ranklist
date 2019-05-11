@@ -123,7 +123,14 @@ const ResultsPage = ({
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <FadeIn>
-            <Text style={[styles.text, { marginVertical: 16 }]}>Results!</Text>
+            <Text
+              style={[
+                styles.text,
+                { marginVertical: 16, textTransform: 'capitalize' }
+              ]}
+            >
+              {name} Results!
+            </Text>
             <ScrollView
               style={{
                 height: 220,
