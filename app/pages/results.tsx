@@ -89,13 +89,24 @@ const styles = StyleSheet.create({
 // const heightPlayer = Math.round(widthPlayer * (9 / 16))
 const ResultsPage = ({
   listId,
+  things: initialThings,
   name
 }: {
   listId: string
+  things: Thing[]
   name: string
 }): JSX.Element => {
   //@ts-ignore
-  const things: Thing[] = useCollection(`lists/${listId}/things`, 'createdAt')
+  let things = initialThings
+  //@ts-ignore
+  const fireBasethings: Thing[] = useCollection(
+    `lists/${listId}/things`,
+    'createdAt'
+  )
+
+  if (fireBasethings.length > 0) {
+    things = fireBasethings
+  }
   const rankThings: Thing[] = things.sort((a, b): number => b.rank - a.rank)
   const uniqueRanks = new Set(rankThings.map(({ rank }): number => rank))
   const groupThings = Array.from(uniqueRanks).map(
@@ -205,18 +216,27 @@ ResultsPage.getInitialProps = async ({
   const listId = query.slug
 
   return db
-    .collection(`lists`)
-    .doc(listId)
+    .collection(`lists/${listId}/things`)
     .get()
     .then(
-      (doc): object => {
-        const list = doc.data()
-        if (list !== undefined) {
-          return { listId, name: list.name }
-        } else {
-          // doc.data() will be undefined in this case
-          return {}
-        }
+      (snapshot): Promise<object> => {
+        let things: Record<string, any>[] = []
+        snapshot.forEach(doc => things.push({ ...doc.data(), id: doc.id }))
+        return db
+          .collection(`lists`)
+          .doc(listId)
+          .get()
+          .then(
+            (doc): object => {
+              const list = doc.data()
+              if (list !== undefined) {
+                return { listId, things, name: list.name }
+              } else {
+                // doc.data() will be undefined in this case
+                return {}
+              }
+            }
+          )
       }
     )
 }
