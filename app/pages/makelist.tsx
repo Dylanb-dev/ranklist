@@ -2,6 +2,8 @@ import React from 'react'
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native'
 import { AutoScrollView } from '../components/AutoScrollView'
 import { FadeIn } from '../components/FadeIn'
+import { Share } from '../components/Share'
+
 import { Thing } from '../interfaces'
 import { colors } from '../theme'
 import { useCollection } from '../useCollection'
@@ -87,6 +89,7 @@ const styles = StyleSheet.create({
 interface MakeListPageProps {
   things: Thing[]
   listId: string
+  name: string
   addThing: (x: string) => void
   removeThing: (x: string) => void
 }
@@ -149,7 +152,7 @@ class MakeListPage extends React.Component<
           <View style={styles.contentContainer}>
             <FadeIn>
               <Text style={styles.text2}>
-                Enter some things you want to rank!
+                Enter {this.props.name} you want to rank!
               </Text>
               <AutoScrollView
                 style={{ height: 220, backgroundColor: 'white', padding: 8 }}
@@ -188,7 +191,7 @@ class MakeListPage extends React.Component<
               />
               <Button
                 color={colors.secondary}
-                title={'Add Thing'}
+                title={'Add to List'}
                 onPress={handleAddThing}
               />
               <View style={{ height: 14 }} />
@@ -204,6 +207,7 @@ class MakeListPage extends React.Component<
                   }
                 }}
               />
+              <Share listId={this.props.listId} />
             </FadeIn>
           </View>
         </View>
@@ -213,11 +217,25 @@ class MakeListPage extends React.Component<
 }
 
 const MakeList = ({
-  query: { slug }
+  listId,
+  things: initialThings,
+  name
 }: {
-  query: { slug: string }
+  listId: string
+  things: Thing[]
+  name: string
 }): JSX.Element => {
-  const listId = slug
+  let things = initialThings
+  //@ts-ignore
+  const fireBasethings: Thing[] = useCollection(
+    `lists/${listId}/things`,
+    'createdAt'
+  )
+
+  if (fireBasethings.length > 0) {
+    things = fireBasethings
+  }
+
   const removeThing = (id: string): void => {
     db.collection(`lists/${listId}/things`)
       .doc(id)
@@ -232,9 +250,9 @@ const MakeList = ({
     })
   }
   //@ts-ignore
-  const things: Thing[] = useCollection(`lists/${listId}/things`, 'createdAt')
   return (
     <MakeListPage
+      name={name}
       listId={listId}
       things={things}
       addThing={addThing}
@@ -248,7 +266,31 @@ MakeList.getInitialProps = async ({
 }: {
   query: { slug: string }
 }): Promise<object> => {
-  return { query }
+  const listId = query.slug
+  return db
+    .collection(`lists/${listId}/things`)
+    .get()
+    .then(
+      (snapshot): Promise<object> => {
+        let things: Record<string, any>[] = []
+        snapshot.forEach(doc => things.push({ ...doc.data(), id: doc.id }))
+        return db
+          .collection(`lists`)
+          .doc(listId)
+          .get()
+          .then(
+            (doc): object => {
+              const list = doc.data()
+              if (list !== undefined) {
+                return { listId, things, name: list.name }
+              } else {
+                // doc.data() will be undefined in this case
+                return {}
+              }
+            }
+          )
+      }
+    )
 }
 
 export default MakeList

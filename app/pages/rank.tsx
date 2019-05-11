@@ -10,6 +10,8 @@ import {
   TouchableOpacity
 } from 'react-native'
 import { FadeIn } from '../components/FadeIn'
+import { Share } from '../components/Share'
+
 import { Thing } from '../interfaces'
 import { colors } from '../theme'
 import { useCollection } from '../useCollection'
@@ -221,6 +223,7 @@ const RankPage = ({
             <Text style={{ fontSize: 16, padding: 16 }}>
               {things.length - groupThings.length} Ties
             </Text>
+            <Share listId={listId} />
           </FadeIn>
         </View>
       </View>

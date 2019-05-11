@@ -10,6 +10,8 @@ import {
   TouchableOpacity
 } from 'react-native'
 import { FadeIn } from '../components/FadeIn'
+import { Share } from '../components/Share'
+
 import { Thing } from '../interfaces'
 import { colors } from '../theme'
 import { useCollection } from '../useCollection'
@@ -189,6 +191,7 @@ const ResultsPage = ({
                 }
               />
             </View>
+            <Share listId={listId} />
           </FadeIn>
         </View>
       </View>

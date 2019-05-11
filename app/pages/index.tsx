@@ -119,7 +119,7 @@ const StartPage = ({  }: {}): JSX.Element => {
             <Text style={styles.text3}>Make it. Share it. Rank it</Text>
             <View style={{ marginVertical: 8 }}>
               <Text style={{ fontSize: 16 }}>
-                Create a list and rank them using A/B selection
+                Create a list and rank them using A/B selection and ELO
               </Text>
             </View>
             <View style={{ marginVertical: 8 }}>
@@ -155,8 +155,8 @@ const StartPage = ({  }: {}): JSX.Element => {
                 title={'arnotts biscuits'}
                 onPress={(): Promise<boolean> =>
                   Router.push(
-                    '/makelist?slug=lK0f3oHvWxopwn6vCO4U',
-                    '/makelist/l/lK0f3oHvWxopwn6vCO4U'
+                    '/rank?slug=Q9d04QrgFm2dZx6Po2Kv',
+                    '/rank/l/Q9d04QrgFm2dZx6Po2Kv'
                   )
                 }
               />
@@ -167,8 +167,8 @@ const StartPage = ({  }: {}): JSX.Element => {
                 title={'fast food chains'}
                 onPress={(): Promise<boolean> =>
                   Router.push(
-                    '/makelist?slug=lK0f3oHvWxopwn6vCO4U',
-                    '/makelist/l/lK0f3oHvWxopwn6vCO4U'
+                    '/rank?slug=jM23cMCFmkVLAY6WWuOk',
+                    '/rank/l/jM23cMCFmkVLAY6WWuOk'
                   )
                 }
               />
@@ -179,8 +179,8 @@ const StartPage = ({  }: {}): JSX.Element => {
                 title={'programming languages'}
                 onPress={(): Promise<boolean> =>
                   Router.push(
-                    '/makelist?slug=lK0f3oHvWxopwn6vCO4U',
-                    '/makelist/l/lK0f3oHvWxopwn6vCO4U'
+                    '/rank?slug=b7XUHNdgQg6XeTp0IMSO',
+                    '/rank/l/b7XUHNdgQg6XeTp0IMSO'
                   )
                 }
               />
