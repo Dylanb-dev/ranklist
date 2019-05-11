@@ -1,5 +1,9 @@
 import React from 'react'
 import { StyleSheet, Text, View, Button, ScrollView } from 'react-native'
+
+import Router from 'next/router'
+import Head from 'next/head'
+
 import { FadeIn } from '../components/FadeIn'
 import { Share } from '../components/Share'
 import { AdSense } from '../components/AdSense'
@@ -7,8 +11,6 @@ import { AdSense } from '../components/AdSense'
 import { Thing } from '../interfaces'
 import { colors } from '../theme'
 import { useCollection } from '../useCollection'
-
-import Router from 'next/router'
 
 const styles = StyleSheet.create({
   container: {
@@ -85,11 +87,12 @@ const styles = StyleSheet.create({
 // const widthPlayer = Math.min(width - 40, maxWidth - 10)
 // const heightPlayer = Math.round(widthPlayer * (9 / 16))
 const ResultsPage = ({
-  query: { slug }
+  listId,
+  name
 }: {
-  query: { slug: string }
+  listId: string
+  name: string
 }): JSX.Element => {
-  const listId = slug
   //@ts-ignore
   const things: Thing[] = useCollection(`lists/${listId}/things`, 'createdAt')
   const rankThings: Thing[] = things.sort((a, b): number => b.rank - a.rank)
@@ -101,6 +104,9 @@ const ResultsPage = ({
 
   return (
     <>
+      <Head>
+        <title>{name} ranking results</title>
+      </Head>
       <View style={styles.background} />
       <View style={styles.container}>
         <View style={styles.contentContainer}>
@@ -195,7 +201,23 @@ ResultsPage.getInitialProps = async ({
 }: {
   query: { slug: string }
 }): Promise<object> => {
-  return { query }
+  const listId = query.slug
+
+  return db
+    .collection(`lists`)
+    .doc(listId)
+    .get()
+    .then(
+      (doc): object => {
+        const list = doc.data()
+        if (list !== undefined) {
+          return { listId, name: list.name }
+        } else {
+          // doc.data() will be undefined in this case
+          return {}
+        }
+      }
+    )
 }
 
 export default ResultsPage

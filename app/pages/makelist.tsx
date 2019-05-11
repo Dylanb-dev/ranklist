@@ -1,5 +1,9 @@
 import React from 'react'
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native'
+
+import Router from 'next/router'
+import Head from 'next/head'
+
 import { AutoScrollView } from '../components/AutoScrollView'
 import { FadeIn } from '../components/FadeIn'
 import { Share } from '../components/Share'
@@ -9,8 +13,6 @@ import { Thing } from '../interfaces'
 import { colors } from '../theme'
 import { useCollection } from '../useCollection'
 import { db } from '../firebase'
-
-import Router from 'next/router'
 
 const styles = StyleSheet.create({
   container: {
@@ -148,6 +150,9 @@ class MakeListPage extends React.Component<
 
     return (
       <>
+        <Head>
+          <title>RankList - {this.props.name}</title>
+        </Head>
         <View style={styles.background} />
         <View style={styles.container}>
           <View style={styles.contentContainer}>

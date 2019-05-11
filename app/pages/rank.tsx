@@ -1,5 +1,9 @@
 import React from 'react'
 import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native'
+
+import Router from 'next/router'
+import Head from 'next/head'
+
 import { FadeIn } from '../components/FadeIn'
 import { Share } from '../components/Share'
 import { AdSense } from '../components/AdSense'
@@ -9,8 +13,6 @@ import { colors } from '../theme'
 import { useCollection } from '../useCollection'
 import { db } from '../firebase'
 import { getNewRating } from '../elo'
-
-import Router from 'next/router'
 
 const styles = StyleSheet.create({
   container: {
@@ -102,11 +104,12 @@ const ThingCard = ({
 )
 
 const RankPage = ({
-  query: { slug }
+  listId,
+  name
 }: {
-  query: { slug: string }
+  listId: string
+  name: string
 }): JSX.Element => {
-  const listId = slug
   //@ts-ignore
   const things: Thing[] = useCollection(`lists/${listId}/things`, 'createdAt')
   const rankThings: Thing[] = things.sort((a, b): number => b.rank - a.rank)
@@ -167,6 +170,9 @@ const RankPage = ({
 
   return (
     <>
+      <Head>
+        <title>Rank {name} on Ranklist</title>
+      </Head>
       <View style={styles.background} />
       <View style={styles.container}>
         <View style={styles.contentContainer}>
@@ -214,7 +220,23 @@ RankPage.getInitialProps = async ({
 }: {
   query: { slug: string }
 }): Promise<object> => {
-  return { query }
+  const listId = query.slug
+
+  return db
+    .collection(`lists`)
+    .doc(listId)
+    .get()
+    .then(
+      (doc): object => {
+        const list = doc.data()
+        if (list !== undefined) {
+          return { listId, name: list.name }
+        } else {
+          // doc.data() will be undefined in this case
+          return {}
+        }
+      }
+    )
 }
 
 export default RankPage

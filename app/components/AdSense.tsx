@@ -11,6 +11,7 @@ export class AdSense extends React.Component {
       document.body.insertBefore(elem, document.body.firstChild)
     }
     installGoogleAds()
+    //@ts-ignore
     ;(window.adsbygoogle = window.adsbygoogle || []).push({})
   }
 

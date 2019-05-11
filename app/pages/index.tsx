@@ -7,9 +7,10 @@ import {
   TextInput,
   Linking
 } from 'react-native'
+import Head from 'next/head'
+import Router from 'next/router'
 
 import { db } from '../firebase'
-import Router from 'next/router'
 import { colors } from '../theme'
 import { FadeIn } from '../components/FadeIn'
 import { AdSense } from '../components/AdSense'
@@ -108,6 +109,9 @@ const StartPage = ({  }: {}): JSX.Element => {
   }
   return (
     <>
+      <Head>
+        <title>RankList</title>
+      </Head>
       <View style={styles.background} />
       <View style={styles.container}>
         <View style={styles.contentContainer}>
