@@ -106,6 +106,7 @@ const ResultsPage = ({
     <>
       <Head>
         <title>{name} ranking results</title>
+        <link rel="icon" href="/static/images/icon.ico" />
       </Head>
       <View style={styles.background} />
       <View style={styles.container}>
