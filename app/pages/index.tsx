@@ -111,7 +111,6 @@ const StartPage = ({  }: {}): JSX.Element => {
     <>
       <Head>
         <title>Ranklist - Rank everything!</title>
-        <link rel="icon" href="/static/images/icon.ico" />
       </Head>
       <View style={styles.background} />
       <View style={styles.container}>

@@ -172,7 +172,6 @@ const RankPage = ({
     <>
       <Head>
         <title>Rank {name} on Ranklist</title>
-        <link rel="icon" href="/static/images/icon.ico" />
       </Head>
       <View style={styles.background} />
       <View style={styles.container}>
