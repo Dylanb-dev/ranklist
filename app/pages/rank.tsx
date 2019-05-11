@@ -1,14 +1,5 @@
 import React, { useState } from 'react'
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  Animated,
-  TextInput,
-  ScrollView,
-  TouchableOpacity
-} from 'react-native'
+import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native'
 import { FadeIn } from '../components/FadeIn'
 import { Share } from '../components/Share'
 
@@ -116,7 +107,6 @@ const RankPage = ({
   query: { slug: string }
 }): JSX.Element => {
   const listId = slug
-  const [readyProgress, setReadyProgress] = useState<ReadyProgress>(0)
   //@ts-ignore
   const things: Thing[] = useCollection(`lists/${listId}/things`, 'createdAt')
   const rankThings: Thing[] = things.sort((a, b): number => b.rank - a.rank)
@@ -154,17 +144,6 @@ const RankPage = ({
     thingB = thingsWithOutA[Math.floor(Math.random() * thingsWithOutA.length)]
   }
 
-  const checkReadyProgress = (things: Thing[]): ReadyProgress => {
-    //@ts-ignore
-    return things.filter(
-      ({ rank: otherRank, label: otherLabel }): boolean =>
-        things.filter(
-          ({ rank, label }): boolean =>
-            rank === otherRank && label !== otherLabel
-        ).length > 0
-    ).length
-  }
-
   const chooseThing = ({
     thingWin,
     thingLose
@@ -184,8 +163,6 @@ const RankPage = ({
         ...thingLose,
         rank: getNewRating(thingLose.rank, thingWin.rank, 0)
       })
-
-    setReadyProgress(checkReadyProgress(things))
   }
 
   return (

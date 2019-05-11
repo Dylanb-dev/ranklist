@@ -1,18 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  Animated,
-  TextInput,
-  ScrollView,
-  TouchableOpacity
-} from 'react-native'
+import React, { useState } from 'react'
+import { StyleSheet, Text, View, Button, TextInput } from 'react-native'
 
-import { Thing } from '../interfaces'
 import { db } from '../firebase'
-import { useCollection } from '../useCollection'
 import Router from 'next/router'
 import { colors } from '../theme'
 import { FadeIn } from '../components/FadeIn'

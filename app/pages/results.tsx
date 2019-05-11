@@ -1,22 +1,11 @@
-import React, { useState } from 'react'
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  Animated,
-  TextInput,
-  ScrollView,
-  TouchableOpacity
-} from 'react-native'
+import React from 'react'
+import { StyleSheet, Text, View, Button, ScrollView } from 'react-native'
 import { FadeIn } from '../components/FadeIn'
 import { Share } from '../components/Share'
 
 import { Thing } from '../interfaces'
 import { colors } from '../theme'
 import { useCollection } from '../useCollection'
-import { db } from '../firebase'
-import { getNewRating } from '../elo'
 
 import Router from 'next/router'
 
