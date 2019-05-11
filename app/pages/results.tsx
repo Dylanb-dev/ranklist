@@ -11,6 +11,7 @@ import { AdSense } from '../components/AdSense'
 import { Thing } from '../interfaces'
 import { colors } from '../theme'
 import { useCollection } from '../useCollection'
+import { db } from '../firebase'
 
 const styles = StyleSheet.create({
   container: {
