@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import React from 'react'
+import { View } from 'react-native'
 
 export class AdSense extends React.Component {
   componentDidMount() {
@@ -17,13 +18,15 @@ export class AdSense extends React.Component {
 
   render() {
     return (
-      <ins
-        className="adsbygoogle"
-        style={{ display: 'block' }}
-        data-ad-client="ca-pub-6452077522405100"
-        data-ad-slot="12121212"
-        data-ad-format="auto"
-      />
+      <View style={{ height: 120 }}>
+        <ins
+          className="adsbygoogle"
+          style={{ display: 'block' }}
+          data-ad-client="ca-pub-6452077522405100"
+          data-ad-slot="12121212"
+          data-ad-format="auto"
+        />
+      </View>
     )
   }
 }

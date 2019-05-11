@@ -1,5 +1,12 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TouchableOpacity,
+  ScrollView
+} from 'react-native'
 
 import Router from 'next/router'
 import Head from 'next/head'
@@ -18,8 +25,9 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     padding: 16,
+    top: 0,
+    minHeight: '100vh',
     width: '100vw',
-    height: '100vh',
     backgroundColor: 'rgba(52, 52, 52, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -28,19 +36,18 @@ const styles = StyleSheet.create({
   contentContainer: {
     alignItems: 'stretch',
     maxWidth: 480,
-    marginTop: 96,
+    marginTop: 54,
     width: '100%',
     flexGrow: 1
   },
   background: {
     flexDirection: 'row',
-    top: -180,
+    top: -65,
     left: -30,
     flexWrap: 'wrap',
-    height: 220,
+    height: 80,
     width: 2000,
-    position: 'absolute',
-    transform: [{ rotate: '-4deg' }],
+    transform: [{ rotate: '-3deg' }],
     backgroundColor: colors.primary,
     zIndex: 1
   },
@@ -184,44 +191,46 @@ const RankPage = ({
       <Head>
         <title>Rank {name} on Ranklist</title>
       </Head>
-      <View style={styles.background} />
-      <View style={styles.container}>
-        <View style={styles.contentContainer}>
-          <FadeIn>
-            <Text style={styles.text}>Choose which {name} you prefer!</Text>
-            <View style={{ flexDirection: 'row' }}>
-              <ThingCard
-                thing={thingA}
-                style={{ marginRight: 4 }}
-                onPress={(): void =>
-                  // @ts-ignore
-                  chooseThing({ thingWin: thingA, thingLose: thingB })
+      <ScrollView>
+        <View style={styles.background} />
+        <View style={styles.container}>
+          <View style={styles.contentContainer}>
+            <FadeIn>
+              <Text style={styles.text}>Choose which {name} you prefer!</Text>
+              <View style={{ flexDirection: 'row' }}>
+                <ThingCard
+                  thing={thingA}
+                  style={{ marginRight: 4 }}
+                  onPress={(): void =>
+                    // @ts-ignore
+                    chooseThing({ thingWin: thingA, thingLose: thingB })
+                  }
+                />
+                <ThingCard
+                  thing={thingB}
+                  style={{ marginLeft: 4 }}
+                  onPress={(): void =>
+                    // @ts-ignore
+                    chooseThing({ thingWin: thingB, thingLose: thingA })
+                  }
+                />
+              </View>
+              <Button
+                color={colors.primary}
+                title={'View Results!'}
+                onPress={(): Promise<boolean> =>
+                  Router.push(`/results?slug=${listId}`, `/results/l/${listId}`)
                 }
               />
-              <ThingCard
-                thing={thingB}
-                style={{ marginLeft: 4 }}
-                onPress={(): void =>
-                  // @ts-ignore
-                  chooseThing({ thingWin: thingB, thingLose: thingA })
-                }
-              />
-            </View>
-            <Button
-              color={colors.primary}
-              title={'View Results!'}
-              onPress={(): Promise<boolean> =>
-                Router.push(`/results?slug=${listId}`, `/results/l/${listId}`)
-              }
-            />
-            <Text style={{ fontSize: 16, padding: 16 }}>
-              {things.length - groupThings.length} Ties
-            </Text>
-            <Share listId={listId} />
-          </FadeIn>
-          <AdSense />
+              <Text style={{ fontSize: 16, padding: 16 }}>
+                {things.length - groupThings.length} Ties
+              </Text>
+              <Share listId={listId} />
+            </FadeIn>
+            <AdSense />
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </>
   )
 }

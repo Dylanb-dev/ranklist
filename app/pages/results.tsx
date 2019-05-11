@@ -17,8 +17,9 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     padding: 16,
+    top: 0,
+    minHeight: '100vh',
     width: '100vw',
-    height: '100vh',
     backgroundColor: 'rgba(52, 52, 52, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -27,19 +28,18 @@ const styles = StyleSheet.create({
   contentContainer: {
     alignItems: 'stretch',
     maxWidth: 480,
-    marginTop: 96,
+    marginTop: 54,
     width: '100%',
     flexGrow: 1
   },
   background: {
     flexDirection: 'row',
-    top: -180,
+    top: -65,
     left: -30,
     flexWrap: 'wrap',
-    height: 220,
+    height: 80,
     width: 2000,
-    position: 'absolute',
-    transform: [{ rotate: '-4deg' }],
+    transform: [{ rotate: '-3deg' }],
     backgroundColor: colors.primary,
     zIndex: 1
   },
@@ -119,98 +119,100 @@ const ResultsPage = ({
       <Head>
         <title>{name} ranking results</title>
       </Head>
-      <View style={styles.background} />
-      <View style={styles.container}>
-        <View style={styles.contentContainer}>
-          <FadeIn>
-            <Text
-              style={[
-                styles.text,
-                { marginVertical: 16, textTransform: 'capitalize' }
-              ]}
-            >
-              {name} Results!
-            </Text>
-            <ScrollView
-              style={{
-                height: 220,
-                backgroundColor: 'white',
-                padding: 8,
-                marginBottom: 8
-              }}
-            >
-              {groupThings.map(
-                (group, index): JSX.Element[] =>
-                  group.map(
-                    ({ label, rank }): JSX.Element => (
-                      <View
-                        key={label}
-                        style={{
-                          marginVertical: 8,
-                          flexDirection: 'row',
-                          alignItems: 'flex-start'
-                        }}
-                      >
-                        <Text
+      <ScrollView>
+        <View style={styles.background} />
+        <View style={styles.container}>
+          <View style={styles.contentContainer}>
+            <FadeIn>
+              <Text
+                style={[
+                  styles.text,
+                  { marginVertical: 16, textTransform: 'capitalize' }
+                ]}
+              >
+                {name} Results!
+              </Text>
+              <ScrollView
+                style={{
+                  height: 220,
+                  backgroundColor: 'white',
+                  padding: 8,
+                  marginBottom: 8
+                }}
+              >
+                {groupThings.map(
+                  (group, index): JSX.Element[] =>
+                    group.map(
+                      ({ label, rank }): JSX.Element => (
+                        <View
+                          key={label}
                           style={{
-                            fontWeight: 'bold',
-                            width: 80,
-                            alignItems: 'center',
-                            fontSize: 16,
-                            marginVertical: 6
+                            marginVertical: 8,
+                            flexDirection: 'row',
+                            alignItems: 'flex-start'
                           }}
                         >
-                          {index + 1}.{' '}
                           <Text
                             style={{
-                              fontSize: 14,
-                              fontWeight: 'normal'
+                              fontWeight: 'bold',
+                              width: 80,
+                              alignItems: 'center',
+                              fontSize: 16,
+                              marginVertical: 6
                             }}
                           >
-                            ({rank})
+                            {index + 1}.{' '}
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontWeight: 'normal'
+                              }}
+                            >
+                              ({rank})
+                            </Text>
                           </Text>
-                        </Text>
-                        <Text
-                          style={{
-                            flex: 1,
-                            alignItems: 'center',
-                            fontSize: 16,
-                            marginVertical: 6
-                          }}
-                        >
-                          {label}
-                        </Text>
-                      </View>
+                          <Text
+                            style={{
+                              flex: 1,
+                              alignItems: 'center',
+                              fontSize: 16,
+                              marginVertical: 6
+                            }}
+                          >
+                            {label}
+                          </Text>
+                        </View>
+                      )
                     )
-                  )
-              )}
-            </ScrollView>
-            <View style={{ marginVertical: 8 }}>
-              <Button
-                color={colors.secondary}
-                title={'Add More'}
-                onPress={(): Promise<boolean> =>
-                  Router.push(
-                    `/makelist?slug=${listId}`,
-                    `/makelist/l/${listId}`
-                  )
-                }
-              />
-            </View>
-            <View style={{ marginVertical: 8 }}>
-              <Button
-                color={colors.primary}
-                title={'Rank'}
-                onPress={(): Promise<boolean> =>
-                  Router.push(`/rank?slug=${listId}`, `/rank/l/${listId}`)
-                }
-              />
-            </View>
-            <Share listId={listId} />
-          </FadeIn>
-          <AdSense />
+                )}
+              </ScrollView>
+              <View style={{ marginVertical: 8 }}>
+                <Button
+                  color={colors.secondary}
+                  title={'Add More'}
+                  onPress={(): Promise<boolean> =>
+                    Router.push(
+                      `/makelist?slug=${listId}`,
+                      `/makelist/l/${listId}`
+                    )
+                  }
+                />
+              </View>
+              <View style={{ marginVertical: 8 }}>
+                <Button
+                  color={colors.primary}
+                  title={'Rank'}
+                  onPress={(): Promise<boolean> =>
+                    Router.push(`/rank?slug=${listId}`, `/rank/l/${listId}`)
+                  }
+                />
+              </View>
+              <Share listId={listId} />
+            </FadeIn>
+            <AdSense />
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </>
   )
 }

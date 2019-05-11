@@ -5,7 +5,8 @@ import {
   View,
   Button,
   TextInput,
-  Linking
+  Linking,
+  ScrollView
 } from 'react-native'
 import Head from 'next/head'
 import Router from 'next/router'
@@ -19,8 +20,9 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     padding: 16,
+    top: 0,
+    minHeight: '100vh',
     width: '100vw',
-    height: '100vh',
     backgroundColor: 'rgba(52, 52, 52, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -29,19 +31,18 @@ const styles = StyleSheet.create({
   contentContainer: {
     alignItems: 'stretch',
     maxWidth: 480,
-    marginTop: 96,
+    marginTop: 54,
     width: '100%',
     flexGrow: 1
   },
   background: {
     flexDirection: 'row',
-    top: -180,
+    top: -65,
     left: -30,
     flexWrap: 'wrap',
-    height: 220,
+    height: 80,
     width: 2000,
-    position: 'absolute',
-    transform: [{ rotate: '-4deg' }],
+    transform: [{ rotate: '-3deg' }],
     backgroundColor: colors.primary,
     zIndex: 1
   },
@@ -112,93 +113,97 @@ const StartPage = ({  }: {}): JSX.Element => {
       <Head>
         <title>Ranklist - Rank everything!</title>
       </Head>
-      <View style={styles.background} />
-      <View style={styles.container}>
-        <View style={styles.contentContainer}>
-          <FadeIn>
-            <Text style={styles.text}>Welcome to Ranklist!</Text>
-            <Text style={styles.text3}>Make it. Share it. Rank it</Text>
-            <View style={{ marginVertical: 8 }}>
-              <Text style={{ fontSize: 16 }}>
-                Create a list and rank them using A/B selection and ELO
-              </Text>
-            </View>
-            <View style={{ marginVertical: 8 }}>
-              <TextInput
-                value={textInput}
-                onChangeText={setTextInput}
-                autoFocus={true}
-                style={{
-                  backgroundColor: 'white',
-                  height: 48,
-                  padding: 8,
-                  marginTop: 16,
-                  marginBottom: 4
+      <ScrollView>
+        <View style={styles.background} />
+        <View style={styles.container}>
+          <View style={styles.contentContainer}>
+            <FadeIn>
+              <Text style={styles.text}>Welcome to Ranklist!</Text>
+              <Text style={styles.text3}>Make it. Share it. Rank it</Text>
+              <View style={{ marginVertical: 8 }}>
+                <Text style={{ fontSize: 16 }}>
+                  Create a list and rank them using A/B selection and ELO
+                </Text>
+              </View>
+              <View style={{ marginVertical: 8 }}>
+                <TextInput
+                  value={textInput}
+                  onChangeText={setTextInput}
+                  autoFocus={true}
+                  style={{
+                    backgroundColor: 'white',
+                    height: 48,
+                    padding: 8,
+                    marginTop: 16,
+                    marginBottom: 4
+                  }}
+                  onSubmitEditing={handleNewList}
+                />
+                <Text style={{ height: 16, marginVertical: 4, color: 'red' }}>
+                  {errorText}
+                </Text>
+                <Button
+                  color={colors.primary}
+                  title={'create list'}
+                  onPress={handleNewList}
+                />
+              </View>
+              <View style={{ marginVertical: 8 }}>
+                <Text style={{ fontSize: 16 }}>Or rank a premade list!</Text>
+              </View>
+              <View style={{ marginVertical: 8 }}>
+                <Button
+                  color={colors.secondary}
+                  title={'fast food chains'}
+                  onPress={(): Promise<boolean> =>
+                    Router.push(
+                      '/rank?slug=jM23cMCFmkVLAY6WWuOk',
+                      '/rank/l/jM23cMCFmkVLAY6WWuOk'
+                    )
+                  }
+                />
+              </View>
+              <View style={{ marginVertical: 8 }}>
+                <Button
+                  color={colors.secondary}
+                  title={'programming languages'}
+                  onPress={(): Promise<boolean> =>
+                    Router.push(
+                      '/rank?slug=b7XUHNdgQg6XeTp0IMSO',
+                      '/rank/l/b7XUHNdgQg6XeTp0IMSO'
+                    )
+                  }
+                />
+              </View>
+              <View style={{ marginVertical: 8 }}>
+                <Button
+                  color={colors.secondary}
+                  title={'arnotts biscuits'}
+                  onPress={(): Promise<boolean> =>
+                    Router.push(
+                      '/rank?slug=Q9d04QrgFm2dZx6Po2Kv',
+                      '/rank/l/Q9d04QrgFm2dZx6Po2Kv'
+                    )
+                  }
+                />
+              </View>
+              <Text
+                onPress={(): Promise<any> => {
+                  return Linking.openURL(
+                    'https://twitter.com/d_broadbridge'
+                  ).catch(
+                    (err): void => console.error('An error occurred', err)
+                  )
                 }}
-                onSubmitEditing={handleNewList}
-              />
-              <Text style={{ height: 16, marginVertical: 4, color: 'red' }}>
-                {errorText}
+                style={{ marginVertical: 16, textDecorationLine: 'underline' }}
+              >
+                Issues? Message me on Twitter
               </Text>
-              <Button
-                color={colors.primary}
-                title={'create list'}
-                onPress={handleNewList}
-              />
-            </View>
-            <View style={{ marginVertical: 8 }}>
-              <Text style={{ fontSize: 16 }}>Or rank a premade list!</Text>
-            </View>
-            <View style={{ marginVertical: 8 }}>
-              <Button
-                color={colors.secondary}
-                title={'fast food chains'}
-                onPress={(): Promise<boolean> =>
-                  Router.push(
-                    '/rank?slug=jM23cMCFmkVLAY6WWuOk',
-                    '/rank/l/jM23cMCFmkVLAY6WWuOk'
-                  )
-                }
-              />
-            </View>
-            <View style={{ marginVertical: 8 }}>
-              <Button
-                color={colors.secondary}
-                title={'programming languages'}
-                onPress={(): Promise<boolean> =>
-                  Router.push(
-                    '/rank?slug=b7XUHNdgQg6XeTp0IMSO',
-                    '/rank/l/b7XUHNdgQg6XeTp0IMSO'
-                  )
-                }
-              />
-            </View>
-            <View style={{ marginVertical: 8 }}>
-              <Button
-                color={colors.secondary}
-                title={'arnotts biscuits'}
-                onPress={(): Promise<boolean> =>
-                  Router.push(
-                    '/rank?slug=Q9d04QrgFm2dZx6Po2Kv',
-                    '/rank/l/Q9d04QrgFm2dZx6Po2Kv'
-                  )
-                }
-              />
-            </View>
-            <Text
-              onPress={(): Promise<any> => {
-                return Linking.openURL(
-                  'https://twitter.com/d_broadbridge'
-                ).catch((err): void => console.error('An error occurred', err))
-              }}
-              style={{ marginVertical: 16, textDecorationLine: 'underline' }}
-            >
-              Issues? Message me on Twitter
-            </Text>
-          </FadeIn>
-          <AdSense />
+            </FadeIn>
+            <AdSense />
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </>
   )
 }

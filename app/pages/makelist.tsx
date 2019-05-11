@@ -1,5 +1,12 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  ScrollView
+} from 'react-native'
 
 import Router from 'next/router'
 import Head from 'next/head'
@@ -18,8 +25,9 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     padding: 16,
+    top: 0,
+    minHeight: '100vh',
     width: '100vw',
-    height: '100vh',
     backgroundColor: 'rgba(52, 52, 52, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -28,19 +36,18 @@ const styles = StyleSheet.create({
   contentContainer: {
     alignItems: 'stretch',
     maxWidth: 480,
-    marginTop: 96,
+    marginTop: 54,
     width: '100%',
     flexGrow: 1
   },
   background: {
     flexDirection: 'row',
-    top: -180,
+    top: -65,
     left: -30,
     flexWrap: 'wrap',
-    height: 220,
+    height: 80,
     width: 2000,
-    position: 'absolute',
-    transform: [{ rotate: '-4deg' }],
+    transform: [{ rotate: '-3deg' }],
     backgroundColor: colors.primary,
     zIndex: 1
   },
@@ -153,71 +160,73 @@ class MakeListPage extends React.Component<
         <Head>
           <title>RankList - {this.props.name}</title>
         </Head>
-        <View style={styles.background} />
-        <View style={styles.container}>
-          <View style={styles.contentContainer}>
-            <FadeIn>
-              <Text style={styles.text2}>
-                Enter {this.props.name} you want to rank!
-              </Text>
-              <AutoScrollView
-                style={{ height: 220, backgroundColor: 'white', padding: 8 }}
-              >
-                {this.props.things.length === 0 ? (
-                  <Text style={{ color: colors.darkGray, padding: 2 }}>
-                    Things show up here...
-                  </Text>
-                ) : (
-                  this.props.things.map(
-                    ({ label, id }): JSX.Element => (
-                      <View key={label} style={{ flexDirection: 'row' }}>
-                        <Text style={styles.enteredThingText}>{label}</Text>
-                        <View style={{ width: 33, height: 33 }}>
-                          <Button
-                            color={colors.primary}
-                            title={' X '}
-                            onPress={(): void => handleRemoveThing(id)}
-                          />
+        <ScrollView>
+          <View style={styles.background} />
+          <View style={styles.container}>
+            <View style={styles.contentContainer}>
+              <FadeIn>
+                <Text style={styles.text2}>
+                  Enter {this.props.name} you want to rank!
+                </Text>
+                <AutoScrollView
+                  style={{ height: 220, backgroundColor: 'white', padding: 8 }}
+                >
+                  {this.props.things.length === 0 ? (
+                    <Text style={{ color: colors.darkGray, padding: 2 }}>
+                      Things show up here...
+                    </Text>
+                  ) : (
+                    this.props.things.map(
+                      ({ label, id }): JSX.Element => (
+                        <View key={label} style={{ flexDirection: 'row' }}>
+                          <Text style={styles.enteredThingText}>{label}</Text>
+                          <View style={{ width: 33, height: 33 }}>
+                            <Button
+                              color={colors.primary}
+                              title={' X '}
+                              onPress={(): void => handleRemoveThing(id)}
+                            />
+                          </View>
                         </View>
-                      </View>
+                      )
                     )
-                  )
-                )}
-              </AutoScrollView>
-              <TextInput
-                ref={(r): TextInput | null => (this._textInput = r)}
-                value={this.state.currentInput}
-                onChangeText={(e): void => this.setState({ currentInput: e })}
-                placeholder="Enter thing here..."
-                placeholderTextColor={colors.darkGray}
-                style={styles.textInput}
-                blurOnSubmit={false}
-                onSubmitEditing={handleAddThing}
-                maxLength={40}
-              />
-              <Button
-                color={colors.secondary}
-                title={'Add to List'}
-                onPress={handleAddThing}
-              />
-              <View style={{ height: 14 }} />
-              <Button
-                color={colors.primary}
-                title={'go rank'}
-                onPress={(): void => {
-                  if (this.props.things.length > 2) {
-                    Router.push(
-                      `/rank?slug=${this.props.listId}`,
-                      `/rank/l/${this.props.listId}`
-                    )
-                  }
-                }}
-              />
-              <Share listId={this.props.listId} />
-            </FadeIn>
-            <AdSense />
+                  )}
+                </AutoScrollView>
+                <TextInput
+                  ref={(r): TextInput | null => (this._textInput = r)}
+                  value={this.state.currentInput}
+                  onChangeText={(e): void => this.setState({ currentInput: e })}
+                  placeholder="Enter thing here..."
+                  placeholderTextColor={colors.darkGray}
+                  style={styles.textInput}
+                  blurOnSubmit={false}
+                  onSubmitEditing={handleAddThing}
+                  maxLength={40}
+                />
+                <Button
+                  color={colors.secondary}
+                  title={'Add to List'}
+                  onPress={handleAddThing}
+                />
+                <View style={{ height: 14 }} />
+                <Button
+                  color={colors.primary}
+                  title={'go rank'}
+                  onPress={(): void => {
+                    if (this.props.things.length > 2) {
+                      Router.push(
+                        `/rank?slug=${this.props.listId}`,
+                        `/rank/l/${this.props.listId}`
+                      )
+                    }
+                  }}
+                />
+                <Share listId={this.props.listId} />
+              </FadeIn>
+              <AdSense />
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </>
     )
   }
