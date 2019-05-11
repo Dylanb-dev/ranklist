@@ -174,7 +174,7 @@ const ResultsPage = ({
             <View style={{ marginVertical: 8 }}>
               <Button
                 color={colors.primary}
-                title={'Rank More'}
+                title={'Rank'}
                 onPress={(): Promise<boolean> =>
                   Router.push(`/rank?slug=${listId}`, `/rank/l/${listId}`)
                 }

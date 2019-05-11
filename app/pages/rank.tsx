@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native'
 import { FadeIn } from '../components/FadeIn'
 import { Share } from '../components/Share'
@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
 // const maxWidth = theme.maxContentWidth
 // const widthPlayer = Math.min(width - 40, maxWidth - 10)
 // const heightPlayer = Math.round(widthPlayer * (9 / 16))
-type ReadyProgress = number
 
 const ThingCard = ({
   thing = { label: ' ', id: '', rank: 0 },

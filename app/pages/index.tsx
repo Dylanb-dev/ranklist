@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  Linking
+} from 'react-native'
 
 import { db } from '../firebase'
 import Router from 'next/router'
@@ -174,6 +181,16 @@ const StartPage = ({  }: {}): JSX.Element => {
                 }
               />
             </View>
+            <Text
+              onPress={(): Promise<any> => {
+                return Linking.openURL(
+                  'https://twitter.com/d_broadbridge'
+                ).catch((err): void => console.error('An error occurred', err))
+              }}
+              style={{ marginVertical: 16, textDecorationLine: 'underline' }}
+            >
+              Issues? Message me on Twitter
+            </Text>
           </FadeIn>
         </View>
       </View>
