@@ -223,7 +223,6 @@ class MakeListPage extends React.Component<
                 />
                 <Share listId={this.props.listId} />
               </FadeIn>
-              <AdSense />
             </View>
           </View>
         </ScrollView>

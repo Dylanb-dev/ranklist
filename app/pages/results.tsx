@@ -6,7 +6,7 @@ import Head from 'next/head'
 
 import { FadeIn } from '../components/FadeIn'
 import { Share } from '../components/Share'
-import { AdSense } from '../components/AdSense'
+import { Coffee } from '../components/Coffee'
 
 import { Thing } from '../interfaces'
 import { colors } from '../theme'
@@ -208,8 +208,8 @@ const ResultsPage = ({
                 />
               </View>
               <Share listId={listId} />
+              <Coffee />
             </FadeIn>
-            <AdSense />
           </View>
         </View>
       </ScrollView>

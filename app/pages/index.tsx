@@ -14,7 +14,7 @@ import Router from 'next/router'
 import { db } from '../firebase'
 import { colors } from '../theme'
 import { FadeIn } from '../components/FadeIn'
-import { AdSense } from '../components/AdSense'
+import { Coffee } from '../components/Coffee'
 
 const styles = StyleSheet.create({
   container: {
@@ -199,8 +199,8 @@ const StartPage = ({  }: {}): JSX.Element => {
               >
                 Issues? Message me on Twitter
               </Text>
+              <Coffee />
             </FadeIn>
-            <AdSense />
           </View>
         </View>
       </ScrollView>

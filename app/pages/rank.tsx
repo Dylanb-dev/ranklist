@@ -227,7 +227,6 @@ const RankPage = ({
               </Text>
               <Share listId={listId} />
             </FadeIn>
-            <AdSense />
           </View>
         </View>
       </ScrollView>
